@@ -1,26 +1,30 @@
 #                                               -*- Autoconf -*-
 # Process this file with autoconf to produce a configure script.
 
-AC_PREREQ(2.64)
-AC_INIT([ideviceinstaller], [1.1.2], [https://github.com/libimobiledevice/ideviceinstaller/issues],, [https://libimobiledevice.org])
+AC_PREREQ([2.68])
+AC_INIT([ideviceinstaller], [m4_esyscmd(./git-version-gen $RELEASE_VERSION)], [https://github.com/libimobiledevice/ideviceinstaller/issues], [], [https://libimobiledevice.org])
 AM_INIT_AUTOMAKE([dist-bzip2 no-dist-gzip check-news])
 m4_ifdef([AM_SILENT_RULES], [AM_SILENT_RULES])
 AC_CONFIG_SRCDIR([src/])
 AC_CONFIG_HEADERS([config.h])
 AC_CONFIG_MACRO_DIR([m4])
 
+# Check if we have a version defined
+if test -z $PACKAGE_VERSION; then
+  AC_MSG_ERROR([PACKAGE_VERSION is not defined. Make sure to configure a source tree checked out from git or that .tarball-version is present.])
+fi
+
 # Checks for programs.
 AC_PROG_CC
 AM_PROG_CC_C_O
-AC_PROG_LIBTOOL
+LT_INIT
 
 # Checks for libraries.
 PKG_CHECK_MODULES(libimobiledevice, libimobiledevice-1.0 >= 1.3.0)
-PKG_CHECK_MODULES(libplist, libplist-2.0 >= 2.2.0)
+PKG_CHECK_MODULES(libplist, libplist-2.0 >= 2.3.0)
 PKG_CHECK_MODULES(libzip, libzip >= 0.10)
 
 # Checks for header files.
-AC_HEADER_STDC
 AC_CHECK_HEADERS([stdint.h stdlib.h string.h])
 
 # Checks for typedefs, structures, and compiler characteristics.
@@ -39,16 +43,16 @@ AC_CHECK_FUNCS([strdup strerror asprintf vasprintf])
 # Check for lstat
 
 AC_MSG_CHECKING([whether lstat is available])
-AC_TRY_LINK([
+AC_LINK_IFELSE([AC_LANG_PROGRAM([[
 #include <sys/types.h>
 #include <sys/stat.h>
 #if defined(HAVE_UNISTD_H)
 #include <unistd.h>
 #endif
-],[
+]],[[
 struct stat st;
 lstat("/tmp", &st);
-], [have_lstat="yes"], [have_lstat="no"])
+]])], [have_lstat="yes"], [have_lstat="no"])
 AC_MSG_RESULT([${have_lstat}])
 
 if test "x${have_lstat}" = "xyes" ; then
@@ -60,11 +64,12 @@ AC_SUBST(GLOBAL_CFLAGS)
 
 m4_ifdef([AM_SILENT_RULES],[AM_SILENT_RULES([yes])])
 
-AC_OUTPUT([
+AC_CONFIG_FILES([
 Makefile
 src/Makefile
 man/Makefile
 ])
+AC_OUTPUT
 
 echo "
 Configuration for $PACKAGE $VERSION:

@@ -7,102 +7,131 @@ ideviceinstaller \- Manage apps on iOS devices.
 
 .SH DESCRIPTION
 
-Allows to install, upgrade, uninstall, archive, restore and enumerate installed
-or archived apps on iOS devices.
+Allows to enumerate, install, upgrade, and uninstall apps on iOS devices.
 
-.SH OPTIONS
-
-.SS General options:
+.SH COMMANDS
 .TP
-.B \-d, \-\-debug
-enable communication debugging.
-.TP
-.B \-u, \-\-udid UDID
-target specific device by its 40-digit device UDID.
-.TP
-.B \-h, \-\-help
-prints usage information
-
-.SS Commands:
-.TP
-.B \-l, \-\-list-apps
-list apps installed on the device.
-
+.B list
+List installed apps on the device. Options:
 .RS
-.B Additional options:
 .TP
-\-o list_user
-list user apps only (apps installed by the user)
+.B \-\-user
+List user apps only (apps installed by the user).
 .B This is the default.
 .TP
-\-o list_system
-list system apps only (apps available from the system firmware)
+.B \-\-system
+List system apps only (apps available from the system firmware).
 .TP
-\-o list_all
-list all types of apps
+.B \-\-all
+List all types of apps.
 .TP
-\-o xml
-print output in xml format (PList)
+.B \-\-xml
+Print output as XML Property List.
+.TP
+.B \-a, \-\-attribute ATTR
+Specify attribute to return. This argument can be passed multiple times. If omitted and \f[B]\-\-xml\f[] is *not* specified, the default attributes \f[B]CFBundleIdentifier\f[], \f[B]CFBundleShortVersionString\f[], and \f[B]CFBundleDisplayName\f[] will be used. The attributes can be found in the app's Info.plist, but also some extra attributes exist. Some examples:
+.RS
+.TP
+\f[B]StaticDiskUsage\f[]   disk usage of installed app
+.TP
+\f[B]DynamicDiskUsage\f[]  app user data disk usage
+.TP
+\f[B]Path\f[]              app installation location
+.TP
+\f[B]SignerIdentity\f[]    code signing identity
+.TP
+NOTE: It is suggested to always add CFBundleIdentifier to allow unique identification of the apps.
 .RE
-
 .TP
-.B \-i, \-\-install ARCHIVE
-install app from a package file specified by ARCHIVE. ARCHIVE can also be a
-.ipcc file for carrier bundle installation or a .app directory for developer
+.B \-b, \-\-bundle\-identifier BUNDLEID
+Only query given bundle identifier. This argument can be passed multiple times.
+.RE
+.TP
+.B install PATH
+Install app from a package file specified by PATH. PATH can also be a .ipcc
+file for carrier bundle installation or a .app directory for developer
 app installation.
-
-.TP
-.B \-U, \-\-uninstall APPID
-uninstall app specified by APPID.
-
-.TP
-.B \-g, \-\-upgrade ARCHIVE
-upgrade app from a package file specified by ARCHIVE.
-
-.TP
-.B \-r, \-\-restore APPID
-restore archived app specified by APPID.
-
-.TP
-.B \-L, \-\-list-archives
-list archived applications on the device.
-
 .RS
-.B Additional options:
 .TP
-\-o xml
-print output in xml format (PList)
+.B \-s, \-\-sinf PATH
+Pass an external SINF file located at PATH.
+.TP
+.B \-m, \-\-metadata PATH
+Pass an external iTunesMetadata file located at PATH.
 .RE
 
 .TP
-.B \-a, \-\-archive APPID
-archive app specified by APPID.
+.B uninstall BUNDLEID
+Uninstall app specified by BUNDLEID.
 
+.TP
+.B upgrade PATH
+Upgrade app from a package file specified by PATH.
+
+.SH LEGACY COMMANDS
+The following commands are non-functional with iOS 7 or later.
+.TP
+.B archive BUNDLEID
+Archive app specified by BUNDLEID. Options:
 .RS
-.B Additional options:
 .TP
-\-o uninstall
-uninstall the package after making an archive
+.B \-\-uninstall
+Uninstall the package after making an archive
 .TP
-\-o app_only
-archive application data only
+.B \-\-app_only
+Archive application data only
 .TP
-\-o docs_only
-archive documents (user data) only
+.B \-\-docs_only
+Archive documents (user data) only
 .TP
-\-o copy=PATH
-copy the app archive to directory PATH when done
+.B \-\-copy=PATH
+Copy the app archive to directory PATH when done
 .TP
-\-o remove
-only valid when copy=PATH is used: remove after copy
+.B \-\-remove
+Only valid when copy=PATH is used: remove after copy
 .RE
 
 .TP
-.B \-R, \-\-remove-archive APPID
-remove app archive specified by APPID.
+.B restore BUNDLEID
+Restore archived app specified by BUNDLEID.
 
-.SH AUTHOR
-This manual page was written by Martin Szulecki.
+.TP
+.B list-archives
+List archived apps on the device. Options:
+.RS
+.TP
+.B \-\-xml
+Print output as XML Property List.
+.RE
+
+.TP
+.B remove-archive BUNDLEID
+Remove app archive specified by BUNDLEID.
+
+.SH OPTIONS
+.TP
+.B \-u, \-\-udid UDID
+Target specific device by UDID.
+.TP
+.B \-n, \-\-network
+Connect to network device.
+.TP
+.B \-w, \-\-notify-wait
+Wait for app installed/uninstalled notification before reporting success of operation.
+.TP
+.B \-h, \-\-help
+Print usage information.
+.TP
+.B \-d, \-\-debug
+Enable communication debugging.
+.TP
+.B \-v, \-\-version
+Print version information.
+
+.SH AUTHORS
+Nikias Bassen
+
+Martin Szulecki
 
 .SH ON THE WEB
 https://libimobiledevice.org
